@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westus2"
+    },
+    "storageAccountName": {
+      "value": "vdcadlsgen2"
+    },
+    "accountType": {
+      "value": "Standard_LRS"
+    },
+    "kind": {
+      "value": "StorageV2"
+    },
+    "accessTier": {
+      "value": "Hot"
+    },
+    "supportsHttpsTrafficOnly": {
+      "value": true
+    },
+    "networkAclsBypass": {
+      "value": "AzureServices"
+    },
+    "networkAclsDefaultAction": {
+      "value": "Deny"
+    },
+    "networkAclsVirtualNetworkRules": {
+      "value": [
+        {
+          "id": "/subscriptions/d71bd948-fa81-4611-bd5b-34013ac3de9d/resourceGroups/dlmvdc-shrdsvcs-network-rg/providers/Microsoft.Network/virtualNetworks/dlmvdc-shrdsvcs-vnet/subnets/shrdsvcs"
+        }
+      ]
+    },
+    "isHnsEnabled": {
+      "value": true
+    }
+  }
+}
+  

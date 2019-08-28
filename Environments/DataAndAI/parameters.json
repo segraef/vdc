@@ -1,0 +1,33 @@
+{
+  "Organization": "file(../_Common/organizationName.txt)",
+  "DeploymentName": "DataAndAI",
+  "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+  "Subscription": "DataAndAI",
+  "ModuleConfigurationParameters": {
+    "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+    "DiagnosticStorageAccount": {
+      "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
+      "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+      "Location": "${Parameters.Location}",
+      "Sku": "Standard_GRS",
+      "NetworkAcls": {
+        "bypass": "AzureServices",
+        "defaultAction": "Deny",
+        "virtualNetworkRules": [
+          {
+            "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+          }
+        ],
+        "ipRules": []
+      },
+      "Policies": {
+        "Effect": "Audit"
+      }
+    }
+  },
+  "SQLDBServer": {
+    "Name": "${Parameters.InstanceName}-dbserver",
+    "Comments": "SQL DB Server",
+    "ResourceGroup": "dlmvdc-db-rg"
+  }
+}
