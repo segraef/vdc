@@ -2,29 +2,23 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "allowAzureIps": {
-      "value": false
-    },
-    "administratorLogin": {
-      "value": "vdcadminname"
-    },
-    "administratorLoginPassword": {
-      "value": "Pass@word1"
-    },
-    "enableADS": {
-      "value": false
-    },
-    "location": {
-      "value": "eastus"
-    },
-    "serverName": {
-      "value": "vdcsqlservername"
-    },
-    "enableVA": {
-      "value": false
-    },
-    "serverTags": {
-      "value": {}
-    }
+      "collation": {
+          "value": "SQL_Latin1_General_CP1_CI_AS"
+      },
+      "databaseName": {
+          "value": "vdcsqldwname"
+      },
+      "skuName": {
+          "value": "DW400c"
+      },
+      "serverLocation": {
+          "value": "eastus"
+      },
+      "serverName": {
+          "value": "vdcsqlservername"
+      },
+      "databaseTags": {
+          "value": {}
+      }
   }
 }

@@ -11,7 +11,7 @@
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Azure Storage Account V2 (ADLS Gen2) ARM template synatax.
+		This script contains functionality used to test Azure Databricks ARM template synatax.
 
 	.DESCRIPTION
 		This script contains functionality used to test Azure Storage Account ARM template synatax.

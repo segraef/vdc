@@ -11,10 +11,10 @@
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Azure Storage Account V2 (ADLS Gen2) ARM template synatax.
+		This script contains functionality used to test HDInsights (PaaS) ARM template synatax.
 
 	.DESCRIPTION
-		This script contains functionality used to test Azure Storage Account ARM template synatax.
+		This script contains functionality used to test HDInsights (PaaS) ARM template synatax.
 
 		Deployment steps of the script are outlined below.
         1) Test Template File Syntax

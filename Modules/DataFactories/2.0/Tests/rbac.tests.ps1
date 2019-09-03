@@ -11,10 +11,10 @@
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Azure Storage Account ARM template synatax.
+		This script contains functionality used to test Azure Data Factory V2 ARM template synatax.
 
 	.DESCRIPTION
-		This script contains functionality used to test Azure Storage Account ARM template synatax.
+		This script contains functionality used to test Azure Data Factory V2 ARM template synatax.
 
 		Deployment steps of the script are outlined below.
         1) Test Template File Syntax

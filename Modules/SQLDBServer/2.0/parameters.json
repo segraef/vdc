@@ -15,7 +15,7 @@
       "value": false
     },
     "location": {
-      "value": "eastus"
+      "value": "westus"
     },
     "serverName": {
       "value": "vdcsqlservername"
