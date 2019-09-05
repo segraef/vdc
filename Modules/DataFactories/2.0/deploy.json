@@ -2,38 +2,59 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "name": {
+    "dataFactoryName": {
       "type": "string",
-      "defaultValue": "myv2datafactory"
+      "defaultValue": "myv2datafactory",
+      "metadata": {
+        "description": "Data Factory Name."
+      }
     },
-    "location": {
+    "dataFactoryLocation": {
       "type": "string",
-      "defaultValue": "East US"
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of Data Factory."
+      }
     },
     "apiVersion": {
       "type": "string",
-      "defaultValue": "2018-06-01"
+      "defaultValue": "2018-06-01",
+      "metadata": {
+        "description": "Version of the Data Factory Schema."
+      }
     },
     "gitAccountName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Git Account Name."
+      }
     },
     "gitRepositoryName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Git Repository Name."
+      }
     },
     "gitBranchName": {
       "type": "string",
-      "defaultValue": "master"
+      "defaultValue": "master",
+      "metadata": {
+        "description": "Git Branch Name."
+      }
     },
     "gitRootFolder": {
       "type": "string",
-      "defaultValue": "/"
+      "defaultValue": "/",
+      "metadata": {
+        "description": "Git Root Folder."
+      }
     }
   },
   "resources": [
     {
       "apiVersion": "[parameters('apiVersion')]",
-      "name": "[parameters('name')]",
-      "location": "[parameters('location')]",
+      "name": "[parameters('dataFactoryName')]",
+      "location": "[parameters('dataFactoryLocation')]",
       "type": "Microsoft.DataFactory/factories",
       "identity": {
         "type": "SystemAssigned"
