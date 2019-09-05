@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "workspaceName": {
-      "value": "vdcDataBricks"
+      "value": "databricks-workspace"
     },
     "managedResourceGroupName": {
       "value": "databricks-managed-rg"

@@ -11,6 +11,7 @@
     },
     "workspaceName": {
       "type": "string",
+      "defaultValue": "databricks-workspace",
       "metadata": {
         "description": "The name of the workspace."
       }
