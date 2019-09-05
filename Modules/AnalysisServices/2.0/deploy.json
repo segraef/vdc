@@ -1,59 +1,4 @@
 {
-<<<<<<< HEAD
-  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "name": {
-      "type": "string"
-    },
-    "location": {
-      "type": "string"
-    },
-    "sku": {
-      "type": "string",
-      "allowedValues": [
-        "D1",
-        "B1",
-        "B2",
-        "S0",
-        "S1",
-        "S2",
-        "S4",
-        "S8",
-        "S9"
-      ]
-    },
-    "admin": {
-      "type": "string"
-    },
-    "backupBlobContainerUri": {
-      "type": "string"
-    },
-    "managedMode": {
-      "type": "int"
-    }
-  },
-  "resources": [
-    {
-      "apiVersion": "2017-08-01",
-      "name": "[parameters('name')]",
-      "location": "[parameters('location')]",
-      "type": "Microsoft.AnalysisServices/servers",
-      "sku": {
-        "name": "[parameters('sku')]"
-      },
-      "properties": {
-        "asAdministrators": {
-          "members": [
-            "[parameters('admin')]"
-          ]
-        },
-        "backupBlobContainerUri": "[parameters('backupBlobContainerUri')]",
-        "managedMode": "[parameters('managedMode')]"
-      }
-    }
-  ]
-=======
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -263,5 +208,4 @@
       }
     }
   }
->>>>>>> 8c21c840476d57c46664d8070be05f9ad4971cfe
 }
