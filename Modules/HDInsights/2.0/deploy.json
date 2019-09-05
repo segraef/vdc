@@ -1,117 +1,168 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
+  "contentVersion": "0.9.0.0",
   "parameters": {
-    "administratorLogin": {
-      "type": "string"
-    },
-    "administratorLoginPassword": {
-      "type": "securestring"
-    },
-    "location": {
-      "type": "string"
-    },
-    "serverName": {
-      "type": "string"
-    },
-    "enableADS": {
-      "type": "bool",
-      "defaultValue": false
-    },
-    "allowAzureIps": {
-      "type": "bool",
-      "defaultValue": true
-    },
-    "enableVA": {
-      "type": "bool",
-      "defaultValue": false
-    },
-    "serverTags": {
-      "type": "object",
-      "defaultValue": {}
-    }
+  "clusterName": {
+  "type": "string",
+  "metadata": {
+  "description": "The name of the HDInsight cluster to create."
+  }
+  },
+  "clusterLoginUserName": {
+  "type": "string",
+  "defaultValue": "admin",
+  "metadata": {
+  "description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
+  }
+  },
+  "clusterLoginPassword": {
+  "type": "securestring",
+  "metadata": {
+  "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
+  }
+  },
+  "location": {
+  "type": "string",
+  "defaultValue": "westus2",
+  "metadata": {
+  "description": "The location where all azure resources will be deployed."
+  }
+  },
+  "clusterVersion": {
+  "type": "string",
+  "defaultValue": "3.6",
+  "metadata": {
+  "description": "HDInsight cluster version."
+  }
+  },
+  "clusterWorkerNodeCount": {
+  "type": "int",
+  "defaultValue": 4,
+  "metadata": {
+  "description": "The number of nodes in the HDInsight cluster."
+  }
+  },
+  "clusterKind": {
+  "type": "string",
+  "defaultValue": "HADOOP",
+  "metadata": {
+  "description": "The type of the HDInsight cluster to create."
+  }
+  },
+  "sshUserName": {
+  "type": "string",
+  "defaultValue": "sshuser",
+  "metadata": {
+  "description": "These credentials can be used to remotely access the cluster."
+  }
+  },
+  "sshPassword": {
+  "type": "securestring",
+  "metadata": {
+  "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
+  }
+  }
   },
   "resources": [
-    {
-      "condition": "[parameters('enableVA')]",
-      "apiVersion": "2016-01-01",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Storage",
-      "properties": {}
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "location": "[parameters('location')]",
-      "name": "[parameters('serverName')]",
-      "tags": "[parameters('serverTags')]",
-      "properties": {
-        "administratorLogin": "[parameters('administratorLogin')]",
-        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-        "version": "12.0"
-      },
-      "resources": [
-        {
-          "condition": "[parameters('allowAzureIps')]",
-          "apiVersion": "2014-04-01-preview",
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
-          ],
-          "location": "[parameters('location')]",
-          "name": "AllowAllWindowsAzureIps",
-          "properties": {
-            "endIpAddress": "0.0.0.0",
-            "startIpAddress": "0.0.0.0"
-          },
-          "type": "firewallrules"
-        },
-        {
-          "condition": "[parameters('enableADS')]",
-          "apiVersion": "2017-03-01-preview",
-          "type": "securityAlertPolicies",
-          "name": "Default",
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
-          ],
-          "properties": {
-            "state": "Enabled",
-            "disabledAlerts": [],
-            "emailAddresses": [],
-            "emailAccountAdmins": true
-          }
-        },
-        {
-          "condition": "[parameters('enableVA')]",
-          "apiVersion": "2018-06-01-preview",
-          "type": "vulnerabilityAssessments",
-          "name": "Default",
-          "properties": {
-            "storageContainerPath": "[if(parameters('enableVA'), concat(reference(variables('storageName'), '2018-02-01').primaryEndpoints.blob, 'vulnerability-assessment'), '')]",
-            "storageAccountAccessKey": "[if(parameters('enableVA'), listKeys(variables('storageName'), '2018-02-01').keys[0].value, '')]",
-            "recurringScans": {
-              "isEnabled": true,
-              "emailSubscriptionAdmins": true,
-              "emails": []
-            }
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', parameters('serverName'))]",
-            "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]",
-            "[concat('Microsoft.Sql/servers/', parameters('serverName'), '/securityAlertPolicies/Default')]"
-          ]
-        }
-      ],
-      "type": "Microsoft.Sql/servers"
-    }
-  ],
-  "variables": {
-    "subscriptionId": "[subscription().subscriptionId]",
-    "resourceGroupName": "[resourceGroup().name]",
-    "uniqueStorage": "[uniqueString(variables('subscriptionId'), variables('resourceGroupName'), parameters('location'))]",
-    "storageName": "[tolower(concat('sqlva', variables('uniqueStorage')))]"
+  {
+  "apiVersion": "2015-03-01-preview",
+  "name": "[parameters('clusterName')]",
+  "type": "Microsoft.HDInsight/clusters",
+  "location": "[parameters('location')]",
+  "dependsOn": [],
+  "properties": {
+  "clusterVersion": "[parameters('clusterVersion')]",
+  "osType": "Linux",
+  "tier": "Standard",
+  "clusterDefinition": {
+  "kind": "[parameters('clusterKind')]",
+  "componentVersion": {
+  "Hadoop": "2.7"
+  },
+  "configurations": {
+  "gateway": {
+  "restAuthCredential.isEnabled": true,
+  "restAuthCredential.username": "[parameters('clusterLoginUserName')]",
+  "restAuthCredential.password": "[parameters('clusterLoginPassword')]"
   }
-}
+  }
+  },
+  "storageProfile": {
+  "storageaccounts": [
+  {
+  "name": "vdcv2storage.dfs.core.windows.net",
+  "isDefault": true,
+  "fileSystem": "vdchdicluster-2019-08-26t20-18-43-141z",
+  "resourceId": "/subscriptions/d71bd948-fa81-4611-bd5b-34013ac3de9d/resourceGroups/vdc-dataandai/providers/Microsoft.Storage/storageAccounts/vdcv2storage",
+  "msiResourceId": "/subscriptions/d71bd948-fa81-4611-bd5b-34013ac3de9d/resourcegroups/vdc-dataandai/providers/Microsoft.ManagedIdentity/userAssignedIdentities/vdcmanagedidentity"
+  }
+  ]
+  },
+  "computeProfile": {
+  "roles": [
+  {
+  "autoscale": null,
+  "name": "headnode",
+  "minInstanceCount": 1,
+  "targetInstanceCount": 2,
+  "hardwareProfile": {
+  "vmSize": "Standard_D12_V2"
+  },
+  "osProfile": {
+  "linuxOperatingSystemProfile": {
+  "username": "[parameters('sshUserName')]",
+  "password": "[parameters('sshPassword')]"
+  }
+  },
+  "virtualNetworkProfile": null,
+  "scriptActions": [],
+  "dataDisksGroups": []
+  },
+  {
+  "autoscale": null,
+  "name": "workernode",
+  "targetInstanceCount": 4,
+  "hardwareProfile": {
+  "vmSize": "Standard_D4_V2"
+  },
+  "osProfile": {
+  "linuxOperatingSystemProfile": {
+  "username": "[parameters('sshUserName')]",
+  "password": "[parameters('sshPassword')]"
+  }
+  },
+  "virtualNetworkProfile": null,
+  "scriptActions": [],
+  "dataDisksGroups": []
+  },
+  {
+  "autoscale": null,
+  "name": "zookeepernode",
+  "minInstanceCount": 1,
+  "targetInstanceCount": 3,
+  "hardwareProfile": {
+  "vmSize": "Small"
+  },
+  "osProfile": {
+  "linuxOperatingSystemProfile": {
+  "username": "[parameters('sshUserName')]",
+  "password": "[parameters('sshPassword')]"
+  }
+  },
+  "virtualNetworkProfile": null,
+  "scriptActions": [],
+  "dataDisksGroups": []
+  }
+  ]
+  }
+  },
+  "identity": {
+  "type": "UserAssigned",
+  "userAssignedIdentities": {
+  "/subscriptions/d71bd948-fa81-4611-bd5b-34013ac3de9d/resourcegroups/vdc-dataandai/providers/Microsoft.ManagedIdentity/userAssignedIdentities/vdcmanagedidentity": {}
+  }
+  }
+  }
+  ]
+  }
+  

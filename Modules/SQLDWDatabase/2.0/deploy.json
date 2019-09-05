@@ -1,0 +1,121 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "databaseName": {
+          "type": "string",
+          "metadata": {
+          "description": "The name of the Data Warehouse."
+          }
+      },
+      "skuName": {
+          "type": "string",
+          "metadata": {
+          "description": "The Sku of the Data Warehouse."
+          }
+      },
+      "serverName": {
+          "type": "string",
+          "metadata": {
+          "description": "The SQL Logical Server name."
+          }
+      },
+      "serverLocation": {
+          "type": "string",
+          "defaultValue": "[resourceGroup().location]",
+          "metadata": {
+            "description": "Resource location"
+          }
+      },
+      "collation": {
+          "type": "string",
+          "defaultValue": "SQL_Latin1_General_CP1_CI_AS",
+          "metadata": {
+            "description": "The collation of the database."
+          }
+      },
+      "databaseTags": {
+          "defaultValue": {},
+          "type": "object"
+      },
+      "transparentDataEncryption": {
+        "defaultValue": "Enabled",
+        "type": "string",
+        "allowedValues": [
+          "Enabled",
+          "Disabled"
+        ],
+        "metadata": {
+          "description": "Enable/Disable Transparent Data Encryption"
+        }
+      },
+      "serverKeyType": {
+        "type": "string",
+        "defaultValue": "ServiceManaged",
+        "allowedValues": [
+          "ServiceManaged",
+          "AzureKeyVault"
+        ],
+        "metadata": {
+          "description": "The key type of the server (akv or service managed)."
+        }
+      }
+  },
+  "variables": {
+    "databaseName": "[concat(parameters('serverName'), '/', parameters('databaseName'))]"
+  },  
+  "resources": [
+      {
+          "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+          "type": "Microsoft.Sql/servers/databases",
+          "apiVersion": "2017-10-01-preview",
+          "location": "[parameters('serverLocation')]",
+          "tags": "[parameters('databaseTags')]",
+          "sku": {
+              "name": "[parameters('skuName')]",
+              "tier": "DataWarehouse"
+          },
+          "properties": {
+              "collation": "[parameters('collation')]",
+              "serverKeyType": "[parameters('serverKeyType')]"
+          },
+          "resources": [
+            {
+            "comments": "Transparent Data Encryption",
+            "name": "current",
+            "type": "transparentDataEncryption",
+            "apiVersion": "2017-03-01-preview",
+            "properties": {
+              "status": "[parameters('transparentDataEncryption')]"
+            },
+            "dependsOn": [
+              "[parameters('databaseName')]"
+            ]
+          }
+        ]
+      }
+  ],
+  "outputs": {
+    "databaseResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The name of the Resource Group the SQL Database is created in."
+      }
+    },
+    "databaseResourceId": {
+      "type": "string",
+      "value": "[concat(resourceId('Microsoft.Sql/servers', parameters('serverName')), '/databases/', parameters('databaseName'))]",
+      "metadata": {
+        "description": "The Resource Id of the SQL DW Database deployed."
+      }
+    },
+    "dataWarehouseName": {
+      "type": "string",
+      "value": "[variables('databaseName')]",
+      "metadata": {
+        "description": "The Name of the SQL DW Database deployed."
+      }
+    }
+  }  
+}
