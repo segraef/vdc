@@ -6,7 +6,7 @@
           "value": "SQL_Latin1_General_CP1_CI_AS"
       },
       "databaseName": {
-          "value": "vdcsqldwname2"
+          "value": "vdcsqldwname1"
       },
       "skuName": {
           "value": "DW400c"
@@ -25,6 +25,12 @@
       },
       "serverKeyType": {
         "value": "ServiceManaged"
+      },
+      "diagnosticsSettingName": {
+        "value": "sqldiagstologA"
+      },
+      "diagnosticsWorkspaceName": {
+        "value": "vdclaworkspace"
       }
   }
 }

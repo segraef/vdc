@@ -59,41 +59,105 @@
         "metadata": {
           "description": "The key type of the server (akv or service managed)."
         }
+      },
+      "diagnosticsWorkspaceName": {
+        "type": "string",
+        "defaultValue": "vdclaworkspace",
+        "metadata": {
+          "description": "Log Analytics workspace name for the Log Analytics workspace to which logs will be sent."
+        }
+      },
+      "diagnosticsSettingName": {
+        "type": "string",
+        "defaultValue": "sqldwdiagstologanalytics",
+        "metadata": {
+          "description": "Name of the setting for Logging."
+        }
       }
   },
   "variables": {
-    "databaseName": "[concat(parameters('serverName'), '/', parameters('databaseName'))]"
+    "databaseName": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+    "diagnosticsWorkspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('diagnosticsWorkspaceName'))]"
   },  
   "resources": [
-      {
-          "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
-          "type": "Microsoft.Sql/servers/databases",
-          "apiVersion": "2017-10-01-preview",
-          "location": "[parameters('serverLocation')]",
-          "tags": "[parameters('databaseTags')]",
-          "sku": {
-              "name": "[parameters('skuName')]",
-              "tier": "DataWarehouse"
-          },
+    {
+      "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2017-10-01-preview",
+      "location": "[parameters('serverLocation')]",
+      "tags": "[parameters('databaseTags')]",
+      "sku": {
+          "name": "[parameters('skuName')]",
+          "tier": "DataWarehouse"
+      },
+      "properties": {
+          "collation": "[parameters('collation')]",
+          "serverKeyType": "[parameters('serverKeyType')]"
+      },
+      "resources": [
+        {
+        "comments": "Transparent Data Encryption",
+        "name": "current",
+        "type": "transparentDataEncryption",
+        "apiVersion": "2017-03-01-preview",
+        "properties": {
+          "status": "[parameters('transparentDataEncryption')]"
+        },
+        "dependsOn": [
+          "[parameters('databaseName')]"
+          ]
+        },
+        {
+          "comments": "Diagnostics to Log Analytics",
+          "type": "providers/diagnosticSettings",
+          "name": "[concat('Microsoft.Insights/', parameters('diagnosticsSettingName'))]",
+          "dependsOn": [
+            "[parameters('databaseName')]"
+            ],
+          "apiVersion": "2017-05-01-preview",
           "properties": {
-              "collation": "[parameters('collation')]",
-              "serverKeyType": "[parameters('serverKeyType')]"
-          },
-          "resources": [
-            {
-            "comments": "Transparent Data Encryption",
-            "name": "current",
-            "type": "transparentDataEncryption",
-            "apiVersion": "2017-03-01-preview",
-            "properties": {
-              "status": "[parameters('transparentDataEncryption')]"
-            },
-            "dependsOn": [
-              "[parameters('databaseName')]"
+            "name": "[parameters('diagnosticsSettingName')]",
+            "workspaceId": "[variables('diagnosticsWorkspaceId')]",
+            "logs": [ 
+              {
+                "category": "SQLSecurityAuditEvents",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              },
+              {
+                "category": "ExecRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 14,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "SqlRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 14,
+                  "enabled": true
+                }
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
             ]
           }
-        ]
-      }
+        }
+      ]
+    }
   ],
   "outputs": {
     "databaseResourceGroup": {

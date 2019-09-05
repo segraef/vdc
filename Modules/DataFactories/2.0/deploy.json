@@ -87,6 +87,7 @@
       },
       "resources": [
         {
+          "comments": "Diagnostics to Log Analytics",
           "type": "providers/diagnosticSettings",
           "name": "[concat('Microsoft.Insights/', parameters('diagnosticsSettingName'))]",
           "dependsOn": [
