@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "logAnalyticsWorkspaceName": {
-      "value": "workspace"
+      "value": "vdclaworkspace"
     },
     "serviceTier": {
       "value": "PerNode"
@@ -12,10 +12,10 @@
       "value": 365
     },
     "location": {
-      "value": "West US 2"
+      "value": "East US"
     },
     "diagnosticStorageAccountName": {
-      "value": "storage"
+      "value": "vdcdiagstorage"
     },
     "diagnosticStorageAccountId": {
       "value": ""

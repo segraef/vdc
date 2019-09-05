@@ -48,7 +48,24 @@
       "metadata": {
         "description": "Git Root Folder."
       }
+    },
+    "diagnosticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "vdclaworkspace",
+      "metadata": {
+        "description": "Log Analytics workspace name for the Log Analytics workspace to which logs will be sent."
+      }
+    },
+    "diagnosticsSettingName": {
+      "type": "string",
+      "defaultValue": "diagsforloganalytics",
+      "metadata": {
+        "description": "Name of the setting for Logging."
+      }
     }
+  },
+  "variables": {
+    "diagnosticsWorkspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('diagnosticsWorkspaceName'))]"
   },
   "resources": [
     {
@@ -67,7 +84,57 @@
           "collaborationBranch": "[parameters('gitBranchName')]",
           "rootFolder": "[parameters('gitRootFolder')]"
         }
-      }
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "name": "[concat('Microsoft.Insights/', parameters('diagnosticsSettingName'))]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DataFactory/factories', parameters('dataFactoryName'))]"
+          ],
+          "apiVersion": "2017-05-01-preview",
+          "properties": {
+            "name": "[parameters('diagnosticsSettingName')]",
+            "workspaceId": "[variables('diagnosticsWorkspaceId')]",
+            "logs": [ 
+              {
+                "category": "ActivityRuns",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              },
+              {
+                "category": "PipelineRuns",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              },
+              {
+                "category": "TriggerRuns",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
